@@ -1,0 +1,23 @@
+.singleTop{
+    text-align: center;
+}
+
+.singleTopLink{
+    padding-left: 200px;
+}
+
+.singleRender3d {
+    display: flex;
+}
+
+.single {
+    width: 700px;
+    height: 100vh;
+}
+
+.render3d {
+    width: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+}
