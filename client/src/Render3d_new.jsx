@@ -8,14 +8,13 @@ import * as dat from 'dat.gui'
 
 const Render3D = (num) => {
     const mountRef = useRef(null)
-    // const path = `./../../../uploads/ssiteDraco.gltf`
     const path = `./../../../uploads/${num.num}_siteDraco.gltf`
 
     useEffect(() => {
         const currentRef = mountRef.current;
         const gui = new dat.GUI({ width: 400 })
         const sceneParams = {
-            envMapIntensity: 0.1,
+            envMapIntensity: 5,
             dlColor: 0xf71257,
             alColor: 0x1ae2d8,
         }
@@ -29,7 +28,7 @@ const Render3D = (num) => {
         camera.position.set(1, -10, -20);
         camera.lookAt(new THREE.Vector3());
 
-        const renderer = new THREE.WebGLRenderer({alpha: true});
+        const renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
         renderer.shadowMap.enabled = true;
         renderer.setSize(width, height);
         currentRef.appendChild(renderer.domElement);
@@ -50,15 +49,23 @@ const Render3D = (num) => {
         };
         window.addEventListener("resize", resize);
 
+        //HDRI
+        new RGBELoader()
+            .load("./../../../uploads/HDR1,hdr", function (texture){
+                texture.mapping = THREE.EquirectangularReflectionMapping;
+                scene.background = texture;
+                scene.environment = texture;
+            })
+
         // Light
         const folderLights = gui.addFolder("Lights")
 
-        const ambientalLight = new THREE.AmbientLight(0xffffff, 0.1);
+        const ambientalLight = new THREE.AmbientLight(0xffffff, 1);
         scene.add(ambientalLight);
 
         folderLights.add(ambientalLight, 'intensity')
             .min(0.001)
-            .max(0.5)
+            .max(2)
             .step(0.0001)
             .name("DL Intensity")
 
@@ -95,7 +102,7 @@ const Render3D = (num) => {
         scene.environment = envMap
         folderLights.add(sceneParams, 'envMapIntensity')
             .min(0)
-            .max(2)
+            .max(20)
             .step(0.0001)
             .name("EnvMap Intensity")
             .onChange(() => {
@@ -105,14 +112,6 @@ const Render3D = (num) => {
                         child.material.envMapIntensity = sceneParams.envMapIntensity
                     }
                 })
-            })
-
-        //HDRI
-        new RGBELoader()
-            .load("./../../../uploads/IntererHDRI_29.hdr", function (texture){
-                texture.mapping = THREE.EquirectangularReflectionMapping;
-                scene.background = texture;
-                scene.environment = texture;
             })
 
         //Groups

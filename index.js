@@ -4,14 +4,14 @@ const cors = require("cors")
 const path = require("path");
 
 const app = express()
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 8090
 
 app.use(cors())
 app.use(express.json({extended: true}))
 
 // Serve frontend
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, './client/')));
+    app.use(express.static(path.join(__dirname, './client/development')));
 
     app.get('*', (req, res) =>
         res.sendFile(
